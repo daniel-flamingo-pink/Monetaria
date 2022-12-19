@@ -23,14 +23,16 @@ $$​ if \hspace{1mm} U \geq U_{optimal}: \hspace{1cm} R_t = R_0 + R_{slope1} + 
 
 In the borrow rate technical implementation, the `calculateCompoundedInterest` method relies on an approximation that mostly affects high interest rates. The resulting actual borrow rate is as follows:
 
-\$$ \text{Actual APY} = \left( 1 + \frac{\text{Theoretical APY\}}{\text{secsperyear\}} \right)^{\text{secsperyear\}} - 1 \$$
+$$
+\text{Actual APY} = \left( 1 + \frac{\text{Theoretical APY}}{\text{secsperyear}} \right)^{\text{secsperyear}} - 1
+$$
 
 * When $$U<U_{optimal}$$, borrow interest rates increase slowly with utilization.
 * When $$U \geq U_{optimal}$$, borrow interest rates increase sharply with utilization to above 50% APY if liquidity is fully utilized.
 
 Both the variable and stable interest models are derived from the formula above with different parameters for each asset.
 
-Alternatively, stable debts maintain their interest rate at issuance until the specific rebalancing conditions are met. In Monetaria interest models are optimised by new rate strategy parameter **Optimal Stable/Total Debt Ratio** to algorithmically manage stable rate.
+Alternatively, stable debts maintain their interest rate at issuance until the specific rebalancing conditions are met. In Monetaria interest models are optimized by new rate strategy parameter **Optimal Stable/Total Debt Ratio** to algorithmically manage stable rate.
 
 $$if \hspace{1mm} ratio < ratio_{o}: \hspace{1cm} R_{t} = r_{0} + \frac{ratio - ratio_{o}}{1 - ratio_{o}}R_{base}$$
 
