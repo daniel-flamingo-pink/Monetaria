@@ -83,3 +83,53 @@ The stable interest rate provides predictability for the borrower, but it comes 
 
 * Utilization rate: $$U_t > 95%$$
 * Overall borrow rate, the weighed average of all the borrow rates: $$R_O < 25%$$
+
+## Interest Rate Parameters
+
+The interest rate parameters for Monetaria markets are calibrated according to three different interest rate strategies for assets that share similar risk profiles.
+
+### Volatile Rate Strategy
+
+The volatile rate strategy is used for assets that need liquidity at all times and are therefore calibrated with a low optimal utilization ratio.
+
+| Parameter                          | Value |
+| ---------------------------------- | ----- |
+| Optimal utilization                | 45%   |
+| Base variable borrow rate          | 0%    |
+| Variable rate slope 1              | 4%    |
+| Variable rate slope 2              | 300%  |
+| Base stable borrow rate            | 2%    |
+| Stable rate slope 1                | 7%    |
+| Stable rate slope 2                | 300%  |
+| Optimal stable to total debt ratio | 20%   |
+
+### Low Rate Strategy
+
+The low rate strategy is used for low liquidity stablecoins, which have a lower optimal utilization ratio than those with higher liquidity.
+
+| Parameter                          | Value |
+| ---------------------------------- | ----- |
+| Optimal utilization                | 90%   |
+| Base variable borrow rate          | 0%    |
+| Variable rate slope 1              | 4%    |
+| Variable rate slope 2              | 60%   |
+| Base stable borrow rate            | 2%    |
+| Stable rate slope 1                | 0.5%  |
+| Stable rate slope 2                | 60%   |
+| Optimal stable to total debt ratio | 20%   |
+
+### High Rate Strategy
+
+The high rate strategy is used for high liquidity stablecoins, which are calibrated with lower rates to encourage borrowing.
+
+| Parameter                          | Value |
+| ---------------------------------- | ----- |
+| Optimal utilization                | 80%   |
+| Base variable borrow rate          | 0%    |
+| Variable rate slope 1              | 4%    |
+| Variable rate slope 2              | 75%   |
+| Base stable borrow rate            | 1%    |
+| Stable rate slope 1                | 0.5%  |
+| Stable rate slope 2                | 75%   |
+| Optimal stable to total debt ratio | 20%   |
+
