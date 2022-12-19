@@ -133,3 +133,21 @@ The high rate strategy is used for high liquidity stablecoins, which are calibra
 | Stable rate slope 2                | 75%   |
 | Optimal stable to total debt ratio | 20%   |
 
+## Supply Rate
+
+The borrow interest rates paid on Monetaria are distributed as yield to aToken holders who have supplied liquidity to the protocol, excluding a share of yields sent to the ecosystem reserve defined by the reserve factor. This interest rate is generated on the asset that is borrowed out and is shared among all the liquidity providers.
+
+The supply APY, $D\_t$, is calculated as follows:
+
+$$S_t = U_t (SB_t S_t + VB_tV_t) (1 - R_t)$$
+
+where:
+
+* $$U_t$$ is the utilisation ratio
+* $$SB_t$$ is the share of stable borrows
+* $$S_t$$ is the average stable rate
+* $$VB_t$$ is the share of variable borrows
+* $$V_t$$ is the variable rate
+* $$R_t$$ is the reserve factor
+
+You can view the protocol's deposit APY for each asset on the Monetaria App. The average supply APY over a period also includes Flash Loan fees.
