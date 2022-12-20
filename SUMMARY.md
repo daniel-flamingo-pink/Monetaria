@@ -31,3 +31,4 @@
 ## How it works
 
 * [Borrow Interest Rate](how-it-works/borrow-interest-rate.md)
+* [Referral Program](how-it-works/referral-program.md)

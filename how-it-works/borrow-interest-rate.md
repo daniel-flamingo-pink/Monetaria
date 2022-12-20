@@ -2,7 +2,7 @@
 
 ## Monetaria Interest Rate
 
-The Monetaria interest rate algorithm is designed to manage liquidity risk and optimize utilization. Borrow interest rates are derived from the utilization rate ($$U$$), which indicates the availability of capital within the pool.
+The Monetaria interest rate algorithm is designed to manage liquidity risk and optimize utilization. Borrow interest rates are derived from the utilization rate (UU), which indicates the availability of capital within the pool.
 
 ### Utilization Rate
 
@@ -13,143 +13,17 @@ The interest rate model manages liquidity risk in the protocol through user ince
 
 ### Interest Rate Model
 
-Liquidity risk becomes more problematic as $$U$$ approaches 100%. To address this constraint, the interest rate curve is split into two parts around an optimal utilization rate $$U_{optimal}$$. Before $$U_{optimal}$$, the slope is small, after it begins rising sharply.
+Liquidity risk becomes more problematic as UU approaches 100%. To address this constraint, the interest rate curve is split into two parts around an optimal utilization rate (U\<sub>optimal\</sub>). Before U\<sub>optimal\</sub>, the slope is small, after it begins rising sharply.
 
-The interest rate $$R_t$$ follows the model:
+The interest rate (R\<sub>t\</sub>) follows the model:
 
-$$if \hspace{1mm} U < U_{optimal}: \hspace{1cm} R_t = R_0 + \frac{U_t}{U_{optimal}} R_{slope1}$$
-
-$$​ if \hspace{1mm} U \geq U_{optimal}: \hspace{1cm} R_t = R_0 + R_{slope1} + \frac{U_t-U_{optimal}}{1-U_{optimal}}R_{slope2}$$
+\$$ \begin{cases} R\_t = R\_0 + \frac{U\_t}{U\_{optimal\}} R\_{slope1} & \text{if } U < U\_{optimal} \ R\_t = R\_0 + R\_{slope1} + \frac{U\_t-U\_{optimal\}}{1-U\_{optimal\}}R\_{slope2} & \text{if } U \geq U\_{optimal} \end{cases} \$$
 
 In the borrow rate technical implementation, the `calculateCompoundedInterest` method relies on an approximation that mostly affects high interest rates. The resulting actual borrow rate is as follows:
 
-$$
-\text{Actual APY} = \left( 1 + \frac{\text{Theoretical APY}}{\text{secsperyear}} \right)^{\text{secsperyear}} - 1
-$$
+\$$ \text{Actual APY} = \left( 1 + \frac{\text{Theoretical APY\}}{\text{secsperyear\}} \right)^{\text{secsperyear\}} - 1 \$$
 
-* When $$U<U_{optimal}$$, borrow interest rates increase slowly with utilization.
-* When $$U \geq U_{optimal}$$, borrow interest rates increase sharply with utilization to above 50% APY if liquidity is fully utilized.
+* When U < U\<sub>optimal\</sub>, borrow interest rates increase slowly with utilization.
+* When U >= U\<sub>optimal\</sub>, borrow interest rates increase sharply with utilization to above 50% APY if liquidity is fully utilized.
 
 Both the variable and stable interest models are derived from the formula above with different parameters for each asset.
-
-Alternatively, stable debts maintain their interest rate at issuance until the specific rebalancing conditions are met. In Monetaria interest models are optimized by new rate strategy parameter **Optimal Stable/Total Debt Ratio** to algorithmically manage stable rate.
-
-$$if \hspace{1mm} ratio < ratio_{o}: \hspace{1cm} R_{t} = r_{0} + \frac{ratio - ratio_{o}}{1 - ratio_{o}}R_{base}$$
-
-## Model Parameters
-
-There are several factors that need to be considered when determining the interest rates for assets on Monetaria.
-
-### Collateral Assets
-
-First, it is important to distinguish between assets that are predominantly used as collateral (i.e., volatile assets) and need liquidity at all times to enable liquidations.
-
-### Liquidity
-
-The liquidity of an asset on Monetaria is also an important factor. In general, assets with higher liquidity levels should have more stable utilisation and therefore more conservative interest rates.
-
-### Market Conditions
-
-It is also key to consider the current market conditions for an asset. Monetaria's borrowing costs should be aligned with market yield opportunities to prevent rate arbitrage, where users may be incentivized to borrow all the liquidity on Monetaria to take advantage of higher yield opportunities.
-
-### Liquidity Mining
-
-With the rise of liquidity mining, Monetaria has adapted its cost of borrowing by lowering the optimal utilisation rate (Uoptimal) for certain assets. This has increased the borrow costs for these assets, which are partially offset by the liquidity reward.
-
-## Interest Rate Model Parameters
-
-There are two types of interest rate models on Monetaria: variable and stable. Each model has its own set of parameters that are used to determine the interest rate for a given asset.
-
-### Variable Interest Rate Model Parameters
-
-The following parameters are used in the variable interest rate model:
-
-* Optimal utilisation rate ($$U_{optimal}$$)
-* Base variable borrow rate
-* Variable rate slope 1
-* Variable rate slope 2
-
-### Stable Interest Rate Model Parameters
-
-The following parameters are used in the stable interest rate model:
-
-* Optimal utilisation rate ($$U_{optimal}$$)
-* Base stable borrow rate
-* Stable rate slope 1
-* Stable rate slope 2
-* Stable to total debt ratio
-
-### Stable Interest Rate
-
-The stable interest rate provides predictability for the borrower, but it comes at a cost as the interest rates are higher than the variable rate. The rate of a stable loan is fixed until the following rebalancing conditions are met:
-
-* Utilization rate: $$U_t > 95%$$
-* Overall borrow rate, the weighed average of all the borrow rates: $$R_O < 25%$$
-
-## Interest Rate Parameters
-
-The interest rate parameters for Monetaria markets are calibrated according to three different interest rate strategies for assets that share similar risk profiles.
-
-### Volatile Rate Strategy
-
-The volatile rate strategy is used for assets that need liquidity at all times and are therefore calibrated with a low optimal utilization ratio.
-
-| Parameter                          | Value |
-| ---------------------------------- | ----- |
-| Optimal utilization                | 45%   |
-| Base variable borrow rate          | 0%    |
-| Variable rate slope 1              | 4%    |
-| Variable rate slope 2              | 300%  |
-| Base stable borrow rate            | 2%    |
-| Stable rate slope 1                | 7%    |
-| Stable rate slope 2                | 300%  |
-| Optimal stable to total debt ratio | 20%   |
-
-### Low Rate Strategy
-
-The low rate strategy is used for low liquidity stablecoins, which have a lower optimal utilization ratio than those with higher liquidity.
-
-| Parameter                          | Value |
-| ---------------------------------- | ----- |
-| Optimal utilization                | 90%   |
-| Base variable borrow rate          | 0%    |
-| Variable rate slope 1              | 4%    |
-| Variable rate slope 2              | 60%   |
-| Base stable borrow rate            | 2%    |
-| Stable rate slope 1                | 0.5%  |
-| Stable rate slope 2                | 60%   |
-| Optimal stable to total debt ratio | 20%   |
-
-### High Rate Strategy
-
-The high rate strategy is used for high liquidity stablecoins, which are calibrated with lower rates to encourage borrowing.
-
-| Parameter                          | Value |
-| ---------------------------------- | ----- |
-| Optimal utilization                | 80%   |
-| Base variable borrow rate          | 0%    |
-| Variable rate slope 1              | 4%    |
-| Variable rate slope 2              | 75%   |
-| Base stable borrow rate            | 1%    |
-| Stable rate slope 1                | 0.5%  |
-| Stable rate slope 2                | 75%   |
-| Optimal stable to total debt ratio | 20%   |
-
-## Supply Rate
-
-The borrow interest rates paid on Monetaria are distributed as yield to aToken holders who have supplied liquidity to the protocol, excluding a share of yields sent to the ecosystem reserve defined by the reserve factor. This interest rate is generated on the asset that is borrowed out and is shared among all the liquidity providers.
-
-The supply APY, $D\_t$, is calculated as follows:
-
-$$S_t = U_t (SB_t S_t + VB_tV_t) (1 - R_t)$$
-
-where:
-
-* $$U_t$$ is the utilisation ratio
-* $$SB_t$$ is the share of stable borrows
-* $$S_t$$ is the average stable rate
-* $$VB_t$$ is the share of variable borrows
-* $$V_t$$ is the variable rate
-* $$R_t$$ is the reserve factor
-
-You can view the protocol's deposit APY for each asset on the Monetaria App. The average supply APY over a period also includes Flash Loan fees.
